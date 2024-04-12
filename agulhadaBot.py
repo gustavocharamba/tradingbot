@@ -1,14 +1,12 @@
 import yfinance as yf
-import time
-import pandas as pd
 
-from mavlog import __getMavLog__
-from graph import __getGraph__
-from didi import __getDidi__
-from bollinger import __getBollinger__
-from adx import __getAdx__
-from trix import __getTrix__
-from stochastic import __getStochastic__
+from tradingbot.indicators.ema import __getEma__
+from tradingbot.graps.graph import __getGraph__
+from tradingbot.indicators.didi import __getDidi__
+from tradingbot.indicators.bollinger import __getBollinger__
+from tradingbot.indicators.adx import __getAdx__
+from tradingbot.indicators.trix import __getTrix__
+from tradingbot.indicators.stochastic import __getStochastic__
 # from botGraph import __getBotGraph__
 
 #
@@ -21,7 +19,7 @@ boll = __getBollinger__(history, 8)
 adx = __getAdx__(history, 8)
 trix = __getTrix__(history, 4, 9)
 stoch = __getStochastic__(history, 3, 14)
-log_mav = __getMavLog__(history, 8)
+ema = __getEma__(history, 8)
 
 def __getTrade__(balance, amount, period):
     aportes = []
@@ -31,7 +29,7 @@ def __getTrade__(balance, amount, period):
 
     for i in range(history['Close'][-period:].shape[0]):
 
-        if log_mav['mav9_buy_conf'].iloc[i] and balance >= amount:
+        if ema['ema_buy_conf'].iloc[i] and balance >= amount:
             price = history['Close'].iloc[i]
             oper_buy[i] = True
 
@@ -42,7 +40,7 @@ def __getTrade__(balance, amount, period):
             # __getBotGraph__(history, period, oper_buy, oper_sell)
 
 
-        if log_mav['mav9_sell_conf'].iloc[i]:
+        if ema['ema_sell_conf'].iloc[i]:
 
             price = history['Close'].iloc[i]
             oper_sell[i] = True
