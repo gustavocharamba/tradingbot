@@ -1,7 +1,7 @@
 import yfinance as yf
 
 from tradingbot.indicators.ema import __getEma__
-from tradingbot.graps.graph import __getGraph__
+from tradingbot.graps.didiGraph import __getGraph__
 from tradingbot.indicators.didi import __getDidi__
 from tradingbot.indicators.bollinger import __getBollinger__
 from tradingbot.indicators.adx import __getAdx__
@@ -10,7 +10,7 @@ from tradingbot.indicators.stochastic import __getStochastic__
 # from botGraph import __getBotGraph__
 
 #
-btc_data = yf.Ticker("AAPL")
+btc_data = yf.Ticker("BTC-USD")
 history = btc_data.history(period="1mo", interval="1h")
 # history = pd.read_csv('BTCUSDT_H4.csv', index_col='Datetime', parse_dates=True)
 
@@ -29,7 +29,7 @@ def __getTrade__(balance, amount, period):
 
     for i in range(history['Close'][-period:].shape[0]):
 
-        if ema['ema_buy_conf'].iloc[i] and balance >= amount:
+        if ema['ema_buy_conf'].iloc[i]:
             price = history['Close'].iloc[i]
             oper_buy[i] = True
 
@@ -57,6 +57,6 @@ def __getTrade__(balance, amount, period):
     __getGraph__(history, -1, didi, boll, adx, trix, stoch, oper_buy, oper_sell)
     return balance, aportes, oper_buy, oper_sell
 
-balance, aportes, oper_buy, oper_sell= __getTrade__(5000, 2500, -1)
+balance, aportes, oper_buy, oper_sell= __getTrade__(10000, 10000, -1)
 print(f'BALANCE FINALIZADO: {balance}, APORTES FINALIZADOS: {aportes}')
 

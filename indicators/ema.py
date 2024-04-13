@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 
-def __getEma__(history, median):
+def __getEMA__(history,period , short, long):
 
-    log_close = np.log(history['Close'])
-    ema = log_close.rolling(window=median).mean()
+    log_close = np.log(history['Close'][-period:])
+    ema_short = log_close.rolling(window=short).mean()
+    ema_long = log_close.rolling(window=long).mean()
 
-    ema_buy_conf = (ema > ema.shift(1)) & (ema.shift(1) < ema.shift(2))
-    ema_sell_conf = (ema < ema.shift(1)) & (ema.shift(1) > ema.shift(2))
+    ema_buy_conf = (ema_short > ema_long)
+    ema_sell_conf = (ema_short < ema_long)
 
-    return pd.DataFrame({'ema': ema, 'mav9_buy_conf': ema_buy_conf, 'mav9_sell_conf': ema_sell_conf})
+    return pd.DataFrame({'ema_buy_conf': ema_buy_conf, 'ema_sell_conf': ema_sell_conf})
