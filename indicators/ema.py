@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-def __getEMA__(history,period , short, long):
+def __getEMA__(history , short, long):
 
-    log_close = np.log(history['Close'][-period:])
+    log_close = np.log(history['Close'])
     ema_short = log_close.rolling(window=short).mean()
     ema_long = log_close.rolling(window=long).mean()
 

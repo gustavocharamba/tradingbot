@@ -1,14 +1,13 @@
 import yfinance as yf
 
-from graps.edenGraph import __getEdenGraph__
-from indicators.macd import __getMACD__
+from tradingbot.indicators.macd import __getMACD__
 from tradingbot.indicators.eden import __getEdenSetup__
 
 btc_data = yf.Ticker("BTC-USD")
 history = btc_data.history(period="1mo", interval="5m")
 
 macd = __getMACD__(history, 10000,144, 244, 12)
-eden = __getEdenSetup__(history, 10000, 8, 80)
+eden = __getEdenSetup__(history, 8, 80)
 def __getTrade__(balance, amount, period):
     aportes = []
 
