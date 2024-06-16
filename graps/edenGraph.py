@@ -2,23 +2,23 @@ import plotly.graph_objects as go
 import plotly.subplots as subplots
 from datetime import date
 
-def __getEdenGraph__(history, period, eden, macd,  oper_buy, oper_sell):
-    fig = subplots.make_subplots(rows=1, cols=1, row_heights=[0.70, 0.30])
+def __getEdenGraph__(history, eden, macd,  oper_buy, oper_sell):
+    fig = subplots.make_subplots(rows=2, cols=1)
 
     # ============================== >>> Candles <<< ==============================
 
-    fig.add_trace(go.Candlestick(x=history.index[-period:],
-                                 open=history['Open'][-period:],
-                                 high=history['High'][-period:],
-                                 low=history['Low'][-period:],
-                                 close=history['Close'][-period:]), row=1, col=1)
+    fig.add_trace(go.Candlestick(x=history.index,
+                                 open=history['Open'],
+                                 high=history['High'],
+                                 low=history['Low'],
+                                 close=history['Close']), row=1, col=1)
 
     # ============================== >>> Buy/Sell <<< ==============================
-    buy_dates = history.index[-period:][oper_buy[-period:]]
-    buy_prices = history['Close'][-period:][oper_buy[-period:]]
+    buy_dates = history.index[oper_buy]
+    buy_prices = history['Close'][oper_buy]
 
-    sell_dates = history.index[-period:][oper_sell[-period:]]
-    sell_prices = history['Close'][-period:][oper_sell[-period:]]
+    sell_dates = history.index[oper_sell]
+    sell_prices = history['Close'][oper_sell]
 
     fig.add_trace(go.Scatter(x=buy_dates, y=buy_prices, mode='markers', name='Compra',
                              marker=dict(color='Blue', size=10)), row=1, col=1)
@@ -49,3 +49,4 @@ def __getEdenGraph__(history, period, eden, macd,  oper_buy, oper_sell):
     config = {'scrollZoom': True}
 
     fig.show(config=config)
+

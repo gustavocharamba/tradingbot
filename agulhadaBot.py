@@ -1,6 +1,6 @@
 import yfinance as yf
 
-from tradingbot.indicators.ema import __getEma__
+from tradingbot.indicators.ema import __getEMA__
 from tradingbot.graps.didiGraph import __getGraph__
 from tradingbot.indicators.didi import __getDidi__
 from tradingbot.indicators.bollinger import __getBollinger__
@@ -8,7 +8,7 @@ from tradingbot.indicators.adx import __getAdx__
 from tradingbot.indicators.trix import __getTrix__
 from tradingbot.indicators.stochastic import __getStochastic__
 # from botGraph import __getBotGraph__
-
+from tradingbot.setups.trendline import __trendline__
 #
 btc_data = yf.Ticker("BTC-USD")
 history = btc_data.history(period="1mo", interval="1h")
@@ -19,8 +19,8 @@ boll = __getBollinger__(history, 8)
 adx = __getAdx__(history, 8)
 trix = __getTrix__(history, 4, 9)
 stoch = __getStochastic__(history, 3, 14)
-ema = __getEma__(history, 8)
-
+ema = __getEMA__(history, 8, 20)
+trendline = __trendline__(history)
 def __getTrade__(balance, amount, period):
     aportes = []
 
