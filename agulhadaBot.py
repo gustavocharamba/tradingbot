@@ -20,7 +20,7 @@ adx = __getAdx__(history, 8)
 trix = __getTrix__(history, 4, 9)
 stoch = __getStochastic__(history, 3, 14)
 ema = __getEMA__(history, 8, 20)
-trendline = __trendline__(history)
+trendline = __trendline__(history, 60)
 def __getTrade__(balance, amount, period):
     aportes = []
 
@@ -54,7 +54,7 @@ def __getTrade__(balance, amount, period):
 
             aportes = []
 
-    __getGraph__(history, -1, didi, boll, adx, trix, stoch, oper_buy, oper_sell)
+    __getGraph__(history, 120, didi, boll, adx, trix, stoch, oper_buy, oper_sell, trendline)
     return balance, aportes, oper_buy, oper_sell
 
 balance, aportes, oper_buy, oper_sell= __getTrade__(10000, 10000, -1)

@@ -5,7 +5,7 @@ import mplfinance as mpf
 
 # Define the functions as provided
 
-def __trendline__(history):
+def __trendline__(history, period):
     def check_trend_line(support: bool, pivot: int, slope: float, y: np.array):
         intercept = -slope * pivot + y.iloc[pivot]
         line_vals = slope * np.arange(len(y)) + intercept
@@ -83,32 +83,22 @@ def __trendline__(history):
 
     # Take natural log of history to resolve price scaling issues
     history = np.log(history)
-    lookback = 30
+    lookback = period
 
     support_slope = [np.nan] * len(history)
     resist_slope = [np.nan] * len(history)
-    for i in range(lookback - 1, len(history)):
-        candles = history.iloc[i - lookback + 1: i + 1]
-        support_coefs, resist_coefs = fit_trendlines_high_low(candles['high'], candles['low'], candles['close'])
+    for i in range(period - 1, len(history)):
+        candles = history.iloc[i - period + 1: i + 1]
+        support_coefs, resist_coefs = fit_trendlines_high_low(candles['High'], candles['Low'], candles['Close'])
         support_slope[i] = support_coefs[0]
         resist_slope[i] = resist_coefs[0]
 
     history['support_slope'] = support_slope
     history['resist_slope'] = resist_slope
 
-    plt.style.use('dark_background')
-    fig, ax1 = plt.subplots()
-    ax2 = ax1.twinx()
-    history['close'].plot(ax=ax1)
-    history['support_slope'].plot(ax=ax2, label='Support Slope', color='green')
-    history['resist_slope'].plot(ax=ax2, label='Resistance Slope', color='red')
-    plt.title("Trend Line Slopes BTC-USDT Daily")
-    plt.legend()
-    plt.show()
-
-    candles = history.iloc[-30:] # Last 30 candles in history
-    support_coefs_c, resist_coefs_c = fit_trendlines_single(candles['close'])
-    support_coefs, resist_coefs = fit_trendlines_high_low(candles['high'], candles['low'], candles['close'])
+    candles = history.iloc[-period:] # Last 30 candles in history
+    support_coefs_c, resist_coefs_c = fit_trendlines_single(candles['Close'])
+    support_coefs, resist_coefs = fit_trendlines_high_low(candles['High'], candles['Low'], candles['Close'])
 
     support_line_c = support_coefs_c[0] * np.arange(len(candles)) + support_coefs_c[1]
     resist_line_c = resist_coefs_c[0] * np.arange(len(candles)) + resist_coefs_c[1]
@@ -116,13 +106,9 @@ def __trendline__(history):
     support_line = support_coefs[0] * np.arange(len(candles)) + support_coefs[1]
     resist_line = resist_coefs[0] * np.arange(len(candles)) + resist_coefs[1]
 
-    plt.style.use('dark_background')
-    ax = plt.gca()
-
     s_seq = get_line_points(candles, support_line)
     r_seq = get_line_points(candles, resist_line)
     s_seq2 = get_line_points(candles, support_line_c)
     r_seq2 = get_line_points(candles, resist_line_c)
 
-    mpf.plot(candles, alines=dict(alines=[s_seq, r_seq, s_seq2, r_seq2], colors=['w', 'w', 'b', 'b']), type='candle', style='charles', ax=ax)
-    plt.show()
+    return pd.DataFrame({'s_seq': s_seq, 'r_seq': r_seq, 's_seq2': s_seq2, 'r_seq2': r_seq2})
