@@ -2,7 +2,7 @@ import pandas as pd
 
 def __getRSI__(history, period=14):
     """
-    Calculates the Relative Strength Index (RSI) with robust buy confirmation logic.
+    Calculates the Relative Strength Index (RSI) with more frequent buy confirmation logic.
 
     Parameters:
     - history (pd.DataFrame): Historical price data with at least a 'Close' column.
@@ -28,18 +28,20 @@ def __getRSI__(history, period=14):
     # Calculate RSI
     rsi = 100 - (100 / (1 + rs))
 
-    # Calculate short-term SMA of RSI
+    # Calculate short-term SMA of RSI (this will be used as RSI Signal)
     rsi_sma = rsi.rolling(window=3).mean()
 
-    # Define robust buy confirmation conditions
+    # Add RSI_Signal column to the DataFrame
+    history['RSI_Signal'] = rsi_sma
+
+    # Define more frequent buy confirmation (RSI above 30 and rising, no need for oversold condition)
     rsi_buy_conf = (
-        (rsi > 30) &  # RSI crosses above 30 (oversold threshold)
-        (rsi.shift(1) <= 30) &  # RSI was below or at 30 in the previous period
+        (rsi > 30) &  # RSI above 30 (no oversold condition needed)
         (rsi > rsi.shift(1)) &  # RSI is rising
         (rsi > rsi_sma)  # RSI is above its short-term SMA
     )
 
-    # Define sell confirmation conditions
+    # Define sell confirmation conditions (same as before)
     rsi_sell_conf = (
         (rsi < 70) &  # RSI crosses below 70 (overbought threshold)
         (rsi.shift(1) >= 70)  # RSI was above or at 70 in the previous period
