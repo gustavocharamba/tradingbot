@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getMACD__(history, fast_period=12, slow_period=26, signal_period=9):
+def __getMACD__(history, fast_period=12, slow_period=21, signal_period=9):
     """
     Calculates the MACD with more frequent buy confirmation logic.
 
@@ -22,7 +22,8 @@ def __getMACD__(history, fast_period=12, slow_period=26, signal_period=9):
 
     # Define more frequent buy confirmation (when MACD crosses above the signal line, regardless of MACD value)
     macd_buy_conf = (
-        (macd > signal_line) & (macd > -500) # MACD crosses above the signal line
+        (macd > signal_line) &  # MACD crosses above the signal line
+        (macd > macd.rolling(window=slow_period).mean())
     )
 
     return pd.DataFrame({

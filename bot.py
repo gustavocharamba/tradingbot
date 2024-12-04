@@ -1,15 +1,15 @@
 import pandas as pd
 import yfinance as yf
 
-from trading.graph.graph import __getGraph__
-from trading.indicators.macd import __getMACD__
-from trading.indicators.rsi import __getRSI__
-from trading.indicators.ichimoku import __getIchimoku__
-from trading.indicators.obv import __getOBV__
-from trading.indicators.bollinger import __getBollingerBands__
+from tradingbot.graph.graph import __getGraph__
+from tradingbot.indicators.macd import __getMACD__
+from tradingbot.indicators.rsi import __getRSI__
+from tradingbot.indicators.ichimoku import __getIchimoku__
+from tradingbot.indicators.obv import __getOBV__
+from tradingbot.indicators.PSAR import __getParabolicSAR__
 
 # BTC Price History
-btc_data = yf.Ticker("PETR4.SA")
+btc_data = yf.Ticker("BTC-USD")
 history = btc_data.history(period="2y", interval="1h")  # 2 years of data
 
 # Indicators Calculation
@@ -17,10 +17,10 @@ macd = __getMACD__(history)
 rsi = __getRSI__(history)
 ichimoku = __getIchimoku__(history)
 obv = __getOBV__(history)
-bollinger = __getBollingerBands__(history)
+psar = __getParabolicSAR__(history)
 
 # Function to simulate trading with balance control, trade size, and monthly additions
-def simulate_trading(history, macd, rsi, ichimoku, obv, bollinger, initial_balance, trade_size, monthly_addition):
+def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, trade_size, monthly_addition):
     """
     Simulates trading based on MACD, RSI, Ichimoku, OBV, and Bollinger Bands indicators.
     Adds a fixed amount to the balance every month.
@@ -49,10 +49,11 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, bollinger, initial_balan
             last_month = current_month
 
         if (
-                macd['MACD_Buy_Conf'].iloc[i]
-                and obv["OBV_Buy_Conf"].iloc[i]
+                ichimoku["Ichimoku_Buy_Conf"].iloc[i]
+                and (obv["OBV_Buy_Conf"].iloc[i] or obv["OBV_Buy_Conf"].iloc[i - 1] or obv["OBV_Buy_Conf"].iloc[i - 2])
+                and (psar['ParabolicSAR_Buy_Conf'].iloc[i] or psar['ParabolicSAR_Buy_Conf'].iloc[i - 1] or psar['ParabolicSAR_Buy_Conf'].iloc[i - 2])
                 and rsi['RSI_Buy_Conf'].iloc[i]
-                and ichimoku["Ichimoku_Buy_Conf"].iloc[i]
+                and macd['MACD_Buy_Conf'].iloc[i]
                 and position is None
         ):
             # Buy conditions met, open a position
@@ -60,8 +61,6 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, bollinger, initial_balan
             btc_quantity = trade_value / history['Close'].iloc[i]
             position = 'buy'
             buy_price = history['Close'].iloc[i]
-            stop_loss = buy_price * 0.98  # Stop loss 2% below
-            take_profit = buy_price * 1.05  # Take profit 5% above
             current_balance -= trade_value
             executed_buy_signals.append(history.iloc[i])  # Store the buy signal
             print(f"Buy order: {history.index[i]}, Price: {buy_price}, Quantity: {btc_quantity} BTC")
@@ -70,8 +69,6 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, bollinger, initial_balan
             # Sell conditions: Ichimoku Sell, Stop loss, or Take profit
             sell_condition = (
                     ichimoku["Ichimoku_Sell_Conf"].iloc[i]
-                    or history['Close'].iloc[i] <= stop_loss
-                    or history['Close'].iloc[i] >= take_profit
             )
             if sell_condition:
                 position = None
@@ -112,4 +109,4 @@ trade_size = 1  # Allocate 100% of the balance per trade
 monthly_addition = 500  # Add $1,000 to the balance every month
 
 # Run the simulation
-total_profit, final_balance, win_percentage = simulate_trading(history, macd, rsi, ichimoku, obv, bollinger, initial_balance, trade_size, monthly_addition)
+total_profit, final_balance, win_percentage = simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, trade_size, monthly_addition)

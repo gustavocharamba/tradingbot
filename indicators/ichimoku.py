@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
+def __getIchimoku__(history, short_period=8, medium_period=24, long_period=50):
     """
     Calculates the Ichimoku Cloud components and identifies buy/sell confirmations.
 
@@ -11,7 +11,7 @@ def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
     - long_period (int): Period for Senkou Span B calculation. Default is 52.
 
     Returns:
-    - pd.DataFrame: DataFrame with Ichimoku components and buy/sell confirmations.
+    - pd.DataFrame: DataFrame with Ichimoku components and buy/sell confirmation (True/False).
     """
     # Calculate Tenkan-sen (Conversion Line)
     tenkan_sen = (history['High'].rolling(window=short_period).max() +
@@ -31,7 +31,7 @@ def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
     # Calculate Chikou Span (Lagging Span)
     chikou_span = history['Close'].shift(-medium_period)
 
-    # Define Buy Confirmation
+    # Define Buy Confirmation (Ichimoku Buy Condition)
     ichimoku_buy_conf = (
         (history['Close'] > senkou_span_a) &  # Price above Span A
         (history['Close'] > senkou_span_b) &  # Price above Span B
@@ -40,7 +40,7 @@ def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
         (chikou_span > history['Close'].shift(medium_period))  # Chikou Span above past price
     )
 
-    # Define Sell Confirmation
+    # Define Sell Confirmation (Ichimoku Sell Condition)
     ichimoku_sell_conf = (
         (history['Close'] < senkou_span_a) &  # Price below Span A
         (history['Close'] < senkou_span_b) &  # Price below Span B
@@ -49,7 +49,8 @@ def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
         (chikou_span < history['Close'].shift(medium_period))  # Chikou Span below past price
     )
 
-    return pd.DataFrame({
+    # Create a DataFrame with the indicator values, Buy Conf, and Sell Conf
+    ichimoku_combined_values = pd.DataFrame({
         'Tenkan_sen': tenkan_sen,
         'Kijun_sen': kijun_sen,
         'Senkou_Span_A': senkou_span_a,
@@ -58,3 +59,6 @@ def __getIchimoku__(history, short_period=9, medium_period=26, long_period=52):
         'Ichimoku_Buy_Conf': ichimoku_buy_conf,
         'Ichimoku_Sell_Conf': ichimoku_sell_conf
     })
+
+    # Return the DataFrame with Ichimoku values, Buy Conf, and Sell Conf
+    return ichimoku_combined_values
