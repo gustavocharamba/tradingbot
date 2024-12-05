@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getRSI__(history, period=14):
+def __getRSI__(history, period=10):
     """
     Calculates the Relative Strength Index (RSI) with more frequent buy confirmation logic.
 

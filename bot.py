@@ -8,8 +8,9 @@ from tradingbot.indicators.ichimoku import __getIchimoku__
 from tradingbot.indicators.obv import __getOBV__
 from tradingbot.indicators.PSAR import __getParabolicSAR__
 
-# BTC Price History
-btc_data = yf.Ticker("BTC-USD")
+symbol = "MSFT"
+
+btc_data = yf.Ticker(symbol)
 history = btc_data.history(period="2y", interval="1h")  # 2 years of data
 
 # Indicators Calculation
@@ -50,7 +51,7 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, t
 
         if (
                 ichimoku["Ichimoku_Buy_Conf"].iloc[i]
-                and (obv["OBV_Buy_Conf"].iloc[i] or obv["OBV_Buy_Conf"].iloc[i - 1] or obv["OBV_Buy_Conf"].iloc[i - 2])
+                and (obv["OBV_Buy_Conf"].iloc[i] or obv["OBV_Buy_Conf"].iloc[i - 1] or obv["OBV_Buy_Conf"].iloc[i - 2] or obv["OBV_Buy_Conf"].iloc[i - 2])
                 and (psar['ParabolicSAR_Buy_Conf'].iloc[i] or psar['ParabolicSAR_Buy_Conf'].iloc[i - 1] or psar['ParabolicSAR_Buy_Conf'].iloc[i - 2])
                 and rsi['RSI_Buy_Conf'].iloc[i]
                 and macd['MACD_Buy_Conf'].iloc[i]
@@ -63,7 +64,7 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, t
             buy_price = history['Close'].iloc[i]
             current_balance -= trade_value
             executed_buy_signals.append(history.iloc[i])  # Store the buy signal
-            print(f"Buy order: {history.index[i]}, Price: {buy_price}, Quantity: {btc_quantity} BTC")
+            print(f"Buy order: {history.index[i]}, Price: {buy_price}, Quantity: {btc_quantity} {symbol}")
 
         elif position == 'buy':
             # Sell conditions: Ichimoku Sell, Stop loss, or Take profit
