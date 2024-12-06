@@ -8,17 +8,17 @@ from tradingbot.indicators.ichimoku import __getIchimoku__
 from tradingbot.indicators.obv import __getOBV__
 from tradingbot.indicators.PSAR import __getParabolicSAR__
 
-symbol = "MSFT"
+symbol = "BTC-USD"
 
 btc_data = yf.Ticker(symbol)
 history = btc_data.history(period="2y", interval="1h")  # 2 years of data
 
 # Indicators Calculation
-macd = __getMACD__(history)
-rsi = __getRSI__(history)
-ichimoku = __getIchimoku__(history)
+macd = __getMACD__(history, 12, 21, 9)
+rsi = __getRSI__(history, 12)
+ichimoku = __getIchimoku__(history, 8, 24, 50)
 obv = __getOBV__(history)
-psar = __getParabolicSAR__(history)
+psar = __getParabolicSAR__(history, 0.02, 0.2)
 
 # Function to simulate trading with balance control, trade size, and monthly additions
 def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, trade_size, monthly_addition):
@@ -100,7 +100,7 @@ def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, t
     executed_sell_signals_df = pd.DataFrame(executed_sell_signals)
 
     # Plot the graph with executed buy and sell signals
-    __getGraph__(history, macd, rsi, ichimoku, executed_buy_signals_df, executed_sell_signals_df)
+    #__getGraph__(history, macd, rsi, ichimoku, executed_buy_signals_df, executed_sell_signals_df)
 
     return total_profit, current_balance, win_percentage
 

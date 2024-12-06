@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getIchimoku__(history, short_period=8, medium_period=24, long_period=50):
+def __getIchimoku__(history, short_period, medium_period, long_period):
     """
     Calculates the Ichimoku Cloud components and identifies buy/sell confirmations.
 

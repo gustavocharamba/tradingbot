@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getMACD__(history, fast_period=12, slow_period=21, signal_period=9):
+def __getMACD__(history, fast_period, slow_period, signal_period):
     """
     Calculates the MACD with more frequent buy confirmation logic.
 

@@ -1,6 +1,6 @@
 import pandas as pd
 
-def __getParabolicSAR__(history, step=0.02, max_step=0.2):
+def __getParabolicSAR__(history, step, max_step):
     """
     Calculates the Parabolic SAR (Stop and Reverse) and identifies buy/sell confirmations.
 
