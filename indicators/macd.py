@@ -28,7 +28,7 @@ def __getMACD__(history, fast_period, slow_period, signal_period):
 
     return pd.DataFrame({
         'MACD': macd,
-        'Signal_Line': signal_line,
+        'MACD_Signal': signal_line,
         'MACD_Histogram': macd_histogram,
         'MACD_Buy_Conf': macd_buy_conf,
     })

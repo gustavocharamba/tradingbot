@@ -7,6 +7,7 @@ from tradingbot.indicators.rsi import __getRSI__
 from tradingbot.indicators.ichimoku import __getIchimoku__
 from tradingbot.indicators.obv import __getOBV__
 from tradingbot.indicators.PSAR import __getParabolicSAR__
+from tradingbot.indicators.vwap import __getVWAP__
 
 symbol = "BTC-USD"
 
@@ -19,6 +20,7 @@ rsi = __getRSI__(history, 12)
 ichimoku = __getIchimoku__(history, 8, 24, 50)
 obv = __getOBV__(history)
 psar = __getParabolicSAR__(history, 0.02, 0.2)
+vwap = __getVWAP__(history)
 
 # Function to simulate trading with balance control, trade size, and monthly additions
 def simulate_trading(history, macd, rsi, ichimoku, obv, psar, initial_balance, trade_size, monthly_addition):
