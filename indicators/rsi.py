@@ -23,7 +23,10 @@ def __getRSI__(history, period):
     # Calculate short-term SMA of RSI (RSI Signal)
     rsi_signal = rsi.rolling(window=3).mean()
 
+    rsi_buy_conf = rsi <= 60
+
     return pd.DataFrame({
         'RSI': rsi,
         'RSI_Signal': rsi_signal,
+        'RSI_Buy_Conf': rsi_buy_conf
     })
